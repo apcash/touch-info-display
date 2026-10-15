@@ -717,3 +717,72 @@ footer {
   outline: 3px solid white;
   outline-offset: 4px;
 }
+
+.wifi-section {
+  min-width: 0;
+}
+
+.wifi-settings {
+  margin-top: 12px;
+  padding: 0 18px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+}
+
+.wifi-settings summary {
+  padding: 15px 0;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.wifi-settings summary:focus-visible {
+  outline: 3px solid #a47722;
+  outline-offset: 3px;
+}
+
+.wifi-settings label {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 18px;
+  font-size: 14px;
+}
+
+.wifi-settings input {
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.wifi-card > button {
+  margin-top: 18px;
+}
+
+.wifi-details {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.wifi-details p {
+  margin: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.wifi-details svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+.daily-space-page .printer-card {
+  grid-column: 1 / -1;
+}
