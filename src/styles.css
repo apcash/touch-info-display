@@ -808,3 +808,34 @@ footer {
   font-size: 14px;
   color: var(--muted);
 }
+
+.printer-body {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+}
+
+.printer-details {
+  min-width: 0;
+}
+
+.printer-details .card-heading {
+  gap: 16px;
+}
+
+.printer-details h3 {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.printer-details .material {
+  margin: 16px 0 0;
+  padding-top: 12px;
+}
+
+@media (max-width: 620px) {
+  .printer-body {
+    grid-template-columns: 1fr;
+  }
+}
