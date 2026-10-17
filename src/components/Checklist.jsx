@@ -85,6 +85,7 @@ export default function Checklist() {
           <li key={task.id}>
             {editingId === task.id ? (
               <input
+                className="task-edit-input"
                 type="text"
                 aria-label="Edit task text"
                 value={editText}

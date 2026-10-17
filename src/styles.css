@@ -404,7 +404,8 @@ progress::-moz-progress-bar {
   display: flex;
   gap: 8px;
 }
-.checklist form input {
+.checklist form input,
+.checklist .task-edit-input {
   width: 100%;
   min-width: 0;
   background: var(--bg);
@@ -414,6 +415,11 @@ progress::-moz-progress-bar {
   color: var(--ink);
   font-size: 13px;
 }
+
+.task-edit-input {
+  flex: 1;
+}
+
 .add {
   background: #334f3f;
   color: #fff;
@@ -627,11 +633,20 @@ footer {
 
 .daily-space-page .checklist {
   grid-column: 1 / -1;
-  min-height: 420px;
+  height: 420px;
+  min-height: 0;
 }
 
 .daily-space-page .checklist ul {
-  max-height: 360px;
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+}
+
+.daily-space-page .checklist > :not(ul) {
+  flex-shrink: 0;
 }
 
 @media (max-width: 760px) {
