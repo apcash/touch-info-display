@@ -4,6 +4,8 @@ import WeatherCard from "../components/WeatherCard";
 import PrinterCard from "../components/PrinterCard";
 import Checklist from "../components/Checklist";
 import WifiCard from "../components/WifiCard";
+import DailyVerseCard from "../components/DailyVerseCard";
+import { dailyVerses } from "../dailyverses";
 import { weather, printer } from "../demoData";
 import { readSaved, save } from "../storage";
 
@@ -30,6 +32,23 @@ export default function DailySpacePage({ settings }) {
   useEffect(() => {
     save("touch-display.wifi", wifi);
   }, [wifi]);
+
+  const [today, setToday] = useState(() => new Date());
+
+  const dayNumber = Math.floor(
+    Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) /
+      86_400_000
+  );
+
+  const verseIndex = dayNumber % dailyVerses.length;
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setToday(new Date());
+    }, 60_000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <main id="main" className="daily-space-page">
@@ -76,6 +95,7 @@ export default function DailySpacePage({ settings }) {
               </details>
         </div>
         <PrinterCard printer={printer} />
+        <DailyVerseCard verse={dailyVerses[verseIndex]} />
         <Checklist />
       </div>
     </main>

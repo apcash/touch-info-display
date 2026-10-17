@@ -786,3 +786,25 @@ footer {
 .daily-space-page .printer-card {
   grid-column: 1 / -1;
 }
+
+.daily-verse-card {
+  grid-column: 1 / -1;
+}
+
+.daily-verse-card blockquote {
+  margin: 24px 0 0;
+  padding-left: 20px;
+  border-left: 3px solid var(--line);
+}
+
+.daily-verse-card blockquote > p:first-child {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.6;
+}
+
+.daily-verse-card .verse-reference {
+  margin: 14px 0 0;
+  font-size: 14px;
+  color: var(--muted);
+}
