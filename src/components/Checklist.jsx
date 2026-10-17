@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { readSaved, save } from "../storage";
+
 const initialTasks = [
   { id: "first", text: "Explore your new display", done: false },
   { id: "second", text: "Choose your first integration", done: false },
 ];
+
 const validTasks = (value) =>
   Array.isArray(value) &&
   value.every(
@@ -13,15 +15,20 @@ const validTasks = (value) =>
       typeof t.text === "string" &&
       typeof t.done === "boolean",
   );
+
 export default function Checklist() {
   const [tasks, setTasks] = useState(() =>
     readSaved("touch-display.tasks", initialTasks, validTasks),
   );
+
   const [draft, setDraft] = useState("");
   const [saved, setSaved] = useState(true);
+  const [editingId, setEditingId] = useState(null);
+  const [editText, setEditText] = useState("");
   useEffect(() => {
     setSaved(save("touch-display.tasks", tasks));
   }, [tasks]);
+
   function addTask(event) {
     event.preventDefault();
     if (!draft.trim()) return;
@@ -39,7 +46,31 @@ export default function Checklist() {
       ),
     );
   }
+
   const completed = tasks.filter((task) => task.done).length;
+
+  function startEditing(task) {
+    setEditingId(task.id);
+    setEditText(task.text);
+  }
+
+  function saveEdit() {
+    const trimmedText = editText.trim();
+
+    if (!trimmedText) return;
+
+    setTasks((previous) =>
+      previous.map((task) =>
+        task.id === editingId
+          ? { ...task, text: trimmedText }
+          : task
+      )
+    );
+
+    setEditingId(null);
+    setEditText("");
+  }
+
   return (
     <section className="card checklist" aria-labelledby="checklist-title">
       <div className="card-heading">
@@ -52,14 +83,53 @@ export default function Checklist() {
       <ul>
         {tasks.map((task) => (
           <li key={task.id}>
-            <label className={task.done ? "done" : ""}>
+            {editingId === task.id ? (
               <input
-                type="checkbox"
-                checked={task.done}
-                onChange={() => toggleTask(task.id)}
+                type="text"
+                aria-label="Edit task text"
+                value={editText}
+                maxLength={120}
+                onChange={(event) => setEditText(event.target.value)}
+                autoFocus
               />
-              <span>{task.text}</span>
-            </label>
+            ) : (
+              <label className={task.done ? "done" : ""}>
+                <input
+                  type="checkbox"
+                  checked={task.done}
+                  onChange={() => toggleTask(task.id)}
+                />
+                <span>{task.text}</span>
+              </label>
+            )}
+            {editingId === task.id ? (
+              <>
+                <button
+                  type="button"
+                  onClick={saveEdit}
+                  disabled={!editText.trim()}
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingId(null);
+                    setEditText("");
+                  }}
+                >
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={() => startEditing(task)}
+                aria-label={`Edit ${task.text}`}
+              >
+                Edit
+              </button>
+            )}
             <button
               className="remove"
               aria-label={`Delete ${task.text}`}
