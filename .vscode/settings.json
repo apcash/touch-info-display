@@ -3,5 +3,7 @@
         "dakboard",
         "nums",
         "qrcode"
-    ]
+    ],
+
+    "deno.enablePaths": ["./supabase/functions"]
 }
