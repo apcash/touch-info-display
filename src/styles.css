@@ -854,3 +854,12 @@ footer {
     grid-template-columns: 1fr;
   }
 }
+
+.daily-verse-card blockquote p:first-child {
+  white-space: normal;
+}
+
+.verse-reference a {
+  color: inherit;
+  text-underline-offset: 3px;
+}

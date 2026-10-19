@@ -8,6 +8,7 @@ import DailyVerseCard from "../components/DailyVerseCard";
 import { dailyVerses } from "../dailyverses";
 import { weather, printer } from "../demoData";
 import { readSaved, save } from "../storage";
+import { fetchDailyVerse, getVerseDateKey  } from "../verseApi";
 
 const defaultWifi = {
   name: "",
@@ -29,9 +30,51 @@ export default function DailySpacePage({ settings }) {
     readSaved("touch-display.wifi", defaultWifi, validWifi)
   );
 
+  const [apiVerse, setApiVerse] = useState(null);
+  const [verseLoading, setVerseLoading] = useState(true);
+  const [verseError, setVerseError] = useState("");
+  const [verseDate, setVerseDate] = useState(() => getVerseDateKey());
+
   useEffect(() => {
     save("touch-display.wifi", wifi);
   }, [wifi]);
+
+  useEffect(() => {
+    let active = true;
+    let retryTimer;
+
+    setVerseLoading(true);
+    setVerseError("");
+    setApiVerse(null);
+
+    async function loadVerse() {
+      try {
+        const verse = await fetchDailyVerse();
+
+        if (active) {
+          setApiVerse(verse);
+          setVerseError("");
+        }
+      } catch (error) {
+        if (active) {
+          setVerseError(error.message);
+
+          retryTimer = setTimeout(loadVerse, 5 * 60_000);
+        }
+      } finally {
+        if (active) {
+          setVerseLoading(false);
+        }
+      }
+    }
+
+    loadVerse();
+
+    return () => {
+      active = false;
+      clearTimeout(retryTimer);
+    };
+  }, [verseDate]);
 
   const [today, setToday] = useState(() => new Date());
 
@@ -45,6 +88,7 @@ export default function DailySpacePage({ settings }) {
   useEffect(() => {
     const timer = setInterval(() => {
       setToday(new Date());
+      setVerseDate(getVerseDateKey());
     }, 60_000);
 
     return () => clearInterval(timer);
@@ -95,7 +139,11 @@ export default function DailySpacePage({ settings }) {
               </details>
         </div>
         <PrinterCard printer={printer} />
-        <DailyVerseCard verse={dailyVerses[verseIndex]} />
+        <DailyVerseCard
+          verse={apiVerse ?? dailyVerses[verseIndex]}
+          loading={verseLoading}
+          error={verseError}
+        />
         <Checklist />
       </div>
     </main>

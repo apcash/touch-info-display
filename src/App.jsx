@@ -3,6 +3,7 @@ import { readSaved, save } from "./storage";
 import DailySpacePage from "./pages/DailySpacePage";
 import HomePage from "./pages/HomePage";
 import DevotionalPage from "./pages/DevotionalPage";
+import CopyrightNotice from "./components/CopyrightNotice";
 
 const defaults = {
   unit: "F",
@@ -43,6 +44,7 @@ export default function App() {
   const [storageOk, setStorageOk] = useState(true);
   const [currentPage, setCurrentPage] = useState("home");
   const [now, setNow] = useState(() => new Date());
+  const [showCopyright, setShowCopyright] = useState(false);
 
   useEffect(() => {
     setStorageOk(save("touch-display.settings", settings));
@@ -181,8 +183,31 @@ export default function App() {
             {!storageOk && (
               <p role="status">Settings could not be saved on this device.</p>
             )}
+            <button
+              type="button"
+              onClick={() => {
+                setShowCopyright(true);
+                setShowSettings(false);
+              }}
+            >
+              Scripture copyright information
+            </button>
           </section>
         )}
+        {showCopyright && (
+          <main id="copyright-main">
+            <button
+              type="button"
+              onClick={() => setShowCopyright(false)}
+            >
+              ← Back to dashboard
+            </button>
+
+            <CopyrightNotice />
+          </main>
+        )}
+
+        <div hidden={showCopyright}>
           <div hidden={currentPage !== "home"}>
             <HomePage />
           </div>
@@ -226,6 +251,7 @@ export default function App() {
               </button>
             )}
           </nav>
+        </div>
         <footer>
           <span>
             <span className="status-dot" /> Your personal home dashboard
