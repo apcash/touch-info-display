@@ -50,6 +50,7 @@ export async function fetchDailyVerse() {
   const response = await fetch(
     `${baseUrl}/functions/v1/daily-verse`,
     {
+      signal: AbortSignal.timeout(15_000),
       headers: {
         Authorization: `Bearer ${anonKey}`,
         apikey: anonKey,

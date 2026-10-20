@@ -256,7 +256,7 @@ export default function App() {
           <span>
             <span className="status-dot" /> Your personal home dashboard
           </span>
-          <span>Weather & printer are samples · No services connected</span>
+          <span>Weather & printer are samples</span>
         </footer>
       </div>
     </div>

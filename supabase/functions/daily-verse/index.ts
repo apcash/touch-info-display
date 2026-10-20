@@ -13,6 +13,8 @@ const allowedOrigins = [
 // Source attribution and license information: https://www.openbible.info/topics/
 // References only. Scripture text is fetched separately through the ESV API.
 
+
+
 const verseReferences = [
   "Proverbs 3:5-6",
   "Psalm 28:7",
@@ -360,6 +362,7 @@ Deno.serve(async (request) => {
     url.searchParams.set("include-passage-references", "false");
 
     const response = await fetch(url, {
+      signal: AbortSignal.timeout(10_000),
       headers: {
         Authorization: `Token ${apiKey}`,
       },
