@@ -798,6 +798,21 @@ footer {
   border-radius: 12px;
 }
 
+.wifi-heading {
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.wifi-heading h2 {
+  margin: 0;
+}
+
+.wifi-heading button {
+  margin: 0;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
 .daily-space-page .printer-card {
   grid-column: 1 / -1;
 }

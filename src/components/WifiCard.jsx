@@ -12,10 +12,12 @@ export default function WifiCard({ wifi }) {
 
   return (
     <section className="card wifi-card" aria-labelledby="wifi-title">
-      <h2 id="wifi-title">Make yourself at home!</h2>
-      <button type="button" onClick={() => setShowDetails(!showDetails)} aria-expanded={showDetails}>
-        {showDetails ? "Hide Wi-Fi details" : "Show Wi-Fi details"}
-      </button>
+      <div className="card-heading wifi-heading">
+        <h2 id="wifi-title">Make yourself at home!</h2>
+        <button type="button" onClick={() => setShowDetails(!showDetails)} aria-expanded={showDetails}>
+          {showDetails ? "Hide Wi-Fi details" : "Show Wi-Fi details"}
+        </button>
+      </div>
       {showDetails && (
         <div className="wifi-details">
             <p className="muted">Scan to connect to Wi-Fi.</p>        
