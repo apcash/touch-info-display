@@ -863,3 +863,19 @@ footer {
   color: inherit;
   text-underline-offset: 3px;
 }
+
+.weather-credit {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.weather-credit a {
+  color: inherit;
+  text-underline-offset: 3px;
+}
+
+.weather-card .card-footer {
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}

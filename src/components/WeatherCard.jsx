@@ -1,20 +1,47 @@
 import React from "react";
-export default function WeatherCard({ weather, unit }) {
+
+
+export default function WeatherCard({ 
+    weather,
+    unit,
+    loading,
+    error,
+    isLive, 
+  }) {
+
   const degrees = (c) => Math.round(unit === "F" ? (c * 9) / 5 + 32 : c);
+
   return (
     <section className="card weather-card" aria-labelledby="weather-title">
       <div className="card-heading">
         <h2 id="weather-title">Outside</h2>
-        <span className="badge">Demo data</span>
+        <span className="badge">
+          {loading
+            ? "Loading"
+            : error
+              ? isLive
+                ? "Last available"
+                : "Sample data"
+              : isLive
+                ? "Updated"
+                : "Sample data"}
+        </span>
       </div>
       <p className="muted">{weather.location}</p>
+      {error && (
+        <p className="muted" role="status">
+          {isLive
+            ? "Weather refresh failed. Showing the last available forecast."
+            : "Weather unavailable. Showing sample data."}
+        </p>
+      )}
       <div className="weather-main">
         <span className="temperature">
           {degrees(weather.temperatureC)}
           <small>°{unit}</small>
         </span>
         <span className="sun" aria-hidden="true">
-          ☀
+          {weather.icon ?? "☀"}
         </span>
       </div>
       <p className="condition">{weather.condition}</p>
@@ -25,15 +52,47 @@ export default function WeatherCard({ weather, unit }) {
         {weather.forecast.map((item) => (
           <div key={item.time}>
             <span>{item.time}</span>
-            <span aria-hidden="true">☀</span>
+            <span
+              role="img"
+              aria-label={item.condition ?? "Sample conditions"}
+            >
+              {item.icon ?? "☀"}
+            </span>
             <strong>{degrees(item.c)}°</strong>
           </div>
         ))}
       </div>
       <div className="card-footer">
         <span>Humidity {weather.humidity}%</span>
-        <span>Wind {weather.wind}</span>
+        <span>
+          Wind{" "}
+          {Number.isFinite(weather.windKmh)
+            ? `${Math.round(
+                unit === "F" ? weather.windKmh / 1.609344 : weather.windKmh
+              )} ${unit === "F" ? "mph" : "km/h"}`
+            : "—"}
+        </span>
+        <span title="Current UV is a weather-model estimate">
+          UV now{" "}
+          {Number.isFinite(weather.uvNow)
+            ? weather.uvNow.toFixed(1)
+            : "—"}
+          {" · Peak "}
+          {Number.isFinite(weather.uvMax)
+            ? weather.uvMax.toFixed(1)
+            : "—"}
+        </span>
       </div>
+      <p className="weather-credit">
+        Weather data by{" "}
+        <a
+          href="https://open-meteo.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Open-Meteo
+        </a>
+      </p>
     </section>
   );
 }

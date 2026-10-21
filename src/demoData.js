@@ -6,7 +6,7 @@ export const weather = {
   lowC: 16,
   condition: "Partly cloudy",
   humidity: 64,
-  wind: "8 km/h",
+  windKmh: 8,
   forecast: [
     { time: "Now", c: 22 },
     { time: "12 PM", c: 24 },

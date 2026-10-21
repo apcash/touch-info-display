@@ -9,6 +9,7 @@ import { dailyVerses } from "../dailyverses";
 import { weather, printer } from "../demoData";
 import { readSaved, save } from "../storage";
 import { fetchDailyVerse, getVerseDateKey  } from "../verseApi";
+import { fetchWeather } from "../weatherApi";
 
 const defaultWifi = {
   name: "",
@@ -34,6 +35,47 @@ export default function DailySpacePage({ settings }) {
   const [verseLoading, setVerseLoading] = useState(true);
   const [verseError, setVerseError] = useState("");
   const [verseDate, setVerseDate] = useState(() => getVerseDateKey());
+
+  const [liveWeather, setLiveWeather] = useState(null);
+  const [weatherLoading, setWeatherLoading] = useState(true);
+  const [weatherError, setWeatherError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    let refreshTimer;
+
+    async function loadWeather() {
+      let nextRefresh = 15 * 60_000;
+
+      try {
+        const result = await fetchWeather();
+
+        if (active) {
+          setLiveWeather(result);
+          setWeatherError("");
+        }
+      } catch (error) {
+        if (active) {
+          setWeatherError(error.message);
+        }
+
+        nextRefresh = 5 * 60_000;
+      } finally {
+        if (active) {
+          setWeatherLoading(false);
+          refreshTimer = setTimeout(loadWeather, nextRefresh);
+        }
+      }
+    }
+
+    loadWeather();
+
+    return () => {
+      active = false;
+      clearTimeout(refreshTimer);
+    };
+  }, []);
+
 
   useEffect(() => {
     save("touch-display.wifi", wifi);
@@ -105,7 +147,13 @@ export default function DailySpacePage({ settings }) {
       </div>
 
       <div className="dashboard">
-        <WeatherCard weather={weather} unit={settings.unit} />        
+        <WeatherCard
+          weather={liveWeather ?? weather}
+          unit={settings.unit}
+          loading={weatherLoading}
+          error={weatherError}
+          isLive={liveWeather !== null}
+        />        
         <div className="wifi-section">
           <WifiCard wifi={wifi} />
             <details className="wifi-settings">
