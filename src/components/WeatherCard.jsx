@@ -1,4 +1,5 @@
 import React from "react";
+import WeatherIcon from "./WeatherIcon";
 
 
 export default function WeatherCard({ 
@@ -41,7 +42,7 @@ export default function WeatherCard({
           <small>°{unit}</small>
         </span>
         <span className="sun" aria-hidden="true">
-          {weather.icon ?? "☀"}
+          <WeatherIcon condition={weather.condition} size={64} />
         </span>
       </div>
       <p className="condition">{weather.condition}</p>
@@ -56,7 +57,7 @@ export default function WeatherCard({
               role="img"
               aria-label={item.condition ?? "Sample conditions"}
             >
-              {item.icon ?? "☀"}
+              <WeatherIcon condition={item.condition} size={24} />
             </span>
             <strong>{degrees(item.c)}°</strong>
           </div>
