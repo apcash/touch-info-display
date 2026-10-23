@@ -8,7 +8,7 @@ function escapeWifi(value) {
 export default function WifiCard({ wifi }) {
 
     const wifiText = `WIFI:T:WPA;S:${escapeWifi(wifi.name)};P:${escapeWifi(wifi.password)};;`;
-    const [showDetails, setShowDetails] = useState(false);
+    const [showDetails, setShowDetails] = useState(true);
 
   return (
     <section className="card wifi-card" aria-labelledby="wifi-title">

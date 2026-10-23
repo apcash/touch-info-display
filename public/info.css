@@ -1,0 +1,7 @@
+* { box-sizing: border-box; }
+body { margin: 0; background: #f4f5ef; color: #283c35; font: 17px/1.7 system-ui, sans-serif; }
+main { max-width: 800px; margin: 40px auto; padding: 32px; background: #fffef9; border: 1px solid #dce1d5; border-radius: 20px; }
+a { color: #365e4b; text-underline-offset: 4px; overflow-wrap: anywhere; }
+h1 { font-size: 2rem; line-height: 1.2; }
+h2 { font-size: 1.2rem; margin-top: 30px; }
+@media (max-width: 600px) { main { margin: 12px; padding: 22px; } }

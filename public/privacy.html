@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Privacy Policy · Home Touch Display</title><link rel="stylesheet" href="./info.css"></head>
+<body><main>
+<nav><a href="./about.html">About</a> · <a href="./privacy.html">Privacy</a> · <a href="./terms.html">Terms</a></nav>
+<h1>Privacy Policy</h1>
+<p>Last updated: October 23, 2026</p>
+<p>Home Touch Display, also called “at a glance,” is a personal household dashboard maintained by apcash. The optional Google Nest connection is currently under development.</p>
+<h2>Information and purpose</h2>
+<p>The app uses Supabase Authentication for dashboard account emails, identifiers, and sessions. It stores Wi-Fi details, checklist entries, display preferences, the private DAKboard URL, and a daily verse cache in the browser on the device where they are entered or fetched.</p>
+<p>The printer service sends connection status, activity, progress, remaining time, temperatures, and report timestamps to Supabase for display to the signed-in owner. Printer credentials and the upload token are stored in private local configuration on the service device.</p>
+<p>The planned Nest feature will use Google authorization tokens, a selected thermostat identifier, and measured indoor temperature to display an indoor reading. Google’s device response may also include thermostat metadata such as humidity, operating mode, and target temperatures. The intended feature reads temperature and does not change thermostat settings.</p>
+<h2>Access, sharing, and security</h2>
+<p>The app does not sell personal information, use Google user data for advertising, or use it to train generalized AI models. Data is used to provide requested features, maintain account access, and diagnose failures.</p>
+<p>The planned Nest implementation will store Google authorization credentials server-side, outside public source code and browser configuration, and restrict private cloud readings to the authorized account. These protections must be implemented before enabling the Nest feature.</p>
+<p>GitHub Pages hosts the website. Supabase supplies authentication, database storage, and server functions. Google supplies Nest authorization and device data. DAKboard supplies the embedded dashboard, Open-Meteo supplies outdoor weather, and Crossway supplies ESV text. The app also loads Google Fonts. Providers process requests under their own policies and may retain operational logs, including network information.</p>
+<p>Google user data is used and transferred only as needed for requested features, security, legal obligations, and applicable Google API policies, including Limited Use requirements.</p>
+<p>Anyone who can view or operate an unlocked display may see the information shown there, including expanded Wi-Fi details. Access to the device or its backups can expose locally stored data. No system can guarantee absolute security.</p>
+<h2>Storage and retention</h2>
+<p>Local settings remain until changed or cleared. Signing out does not delete Wi-Fi details, checklist entries, or other local settings. The printer database stores the latest status snapshot, overwritten by later uploads, rather than an application-maintained print history. Account and cloud records remain until removed by the owner or administrator. Provider logs and backups may have separate retention schedules.</p>
+<p>For the planned Nest connection, tokens and device configuration will remain while the integration is in use. Any cached temperature reading will support display and refresh reliability. This policy will be updated if a temperature-history feature is introduced.</p>
+<h2>Your choices and deletion</h2>
+<p>Revoke Google access through <a href="https://myaccount.google.com/connections">Google Account connections</a>. Revocation stops future authorized access but does not automatically erase previously stored configuration or readings. Ask the maintainer to remove those records and tokens as well.</p>
+<p>Clear this website’s browser data to remove local settings, Wi-Fi details, checklist entries, and sessions. For cloud-data or account deletion, contact the developer support email displayed on the Google authorization screen. Do not post credentials or household information in public issues.</p>
+<h2>Contact and changes</h2>
+<p>Maintainer: apcash, owner of <a href="https://github.com/apcash/touch-info-display">touch-info-display</a>. Use the developer support email on the Google consent screen for private questions and deletion requests. This policy will be updated as data practices change.</p>
+</main></body></html>
