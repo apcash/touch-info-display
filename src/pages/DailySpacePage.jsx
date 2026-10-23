@@ -6,7 +6,7 @@ import Checklist from "../components/Checklist";
 import WifiCard from "../components/WifiCard";
 import DailyVerseCard from "../components/DailyVerseCard";
 import { dailyVerses } from "../dailyverses";
-import { weather, printer } from "../demoData";
+import { weather } from "../demoData";
 import { readSaved, save } from "../storage";
 import { fetchDailyVerse, getVerseDateKey  } from "../verseApi";
 import { fetchWeather } from "../weatherApi";
@@ -186,7 +186,7 @@ export default function DailySpacePage({ settings }) {
                   </label>
               </details>
         </div>
-        <PrinterCard printer={printer} />
+        <PrinterCard />
         <DailyVerseCard
           verse={apiVerse ?? dailyVerses[verseIndex]}
           loading={verseLoading}

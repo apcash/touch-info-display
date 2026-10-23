@@ -4,6 +4,7 @@ import DailySpacePage from "./pages/DailySpacePage";
 import HomePage from "./pages/HomePage";
 import DevotionalPage from "./pages/DevotionalPage";
 import CopyrightNotice from "./components/CopyrightNotice";
+import AccountSettings from "./components/AccountSettings";
 
 const defaults = {
   unit: "F",
@@ -183,6 +184,7 @@ export default function App() {
             {!storageOk && (
               <p role="status">Settings could not be saved on this device.</p>
             )}
+            <AccountSettings />
             <button
               type="button"
               onClick={() => {
@@ -256,7 +258,7 @@ export default function App() {
           <span>
             <span className="status-dot" /> Your personal home dashboard
           </span>
-          <span>Printer information is sample data</span>
+          <span>Made for everyday life at home</span>
         </footer>
       </div>
     </div>

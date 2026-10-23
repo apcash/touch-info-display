@@ -8,7 +8,8 @@
         "Meteo",
         "mqtts",
         "nums",
-        "qrcode"
+        "qrcode",
+        "SUPABASE"
     ],
 
     "deno.enablePaths": ["./supabase/functions"]

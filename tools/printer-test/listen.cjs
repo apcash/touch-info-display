@@ -27,6 +27,10 @@ async function main() {
   const serial = (await questions.question("Printer serial number: ")).trim();
   const password = (await questions.question("LAN access code: ")).trim();
 
+  const uploadToken = (
+    await questions.question("Dashboard printer upload token: ")
+  ).trim();
+
   questions.close();
 
   console.log("Connecting to the printer…");
@@ -63,6 +67,57 @@ async function main() {
   let connected = false;
 
   let latestStatus = {};
+
+  const uploadUrl =
+    "https://tpkhcrappxeohjjisabh.supabase.co/functions/v1/smooth-handler";
+
+  let uploadInFlight = null;
+
+  async function sendSnapshot() {
+    const readings = connected ? latestStatus : {};
+
+    const snapshot = {
+      connected,
+      state: readings.State ?? null,
+      progress_percent: readings["Progress (%)"] ?? null,
+      remaining_minutes: readings["Minutes remaining"] ?? null,
+      nozzle_temperature_c: readings["Nozzle temperature"] ?? null,
+      bed_temperature_c: readings["Bed temperature"] ?? null,
+    };
+
+    try {
+      const response = await fetch(uploadUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-printer-token": uploadToken,
+        },
+        body: JSON.stringify(snapshot),
+        signal: AbortSignal.timeout(15_000),
+      });
+
+      if (!response.ok) {
+        console.error(`Printer upload failed: HTTP ${response.status}`);
+        return;
+      }
+
+      console.log("Printer status saved to Supabase.");
+    } catch (error) {
+      console.error("Printer upload failed:", error.message);
+    }
+  }
+
+  function uploadStatus() {
+    if (!uploadInFlight) {
+      uploadInFlight = sendSnapshot().finally(() => {
+        uploadInFlight = null;
+      });
+    }
+
+    return uploadInFlight;
+  }
+
+  const uploadTimer = setInterval(uploadStatus, 30_000);
 
   client.on("message", (_topic, message) => {
     try {
@@ -126,8 +181,18 @@ async function main() {
     });
   });
 
-  process.once("SIGINT", () => {
+  process.once("SIGINT", async () => {
+    console.log("Stopping and reporting disconnected…");
+
+    clearInterval(uploadTimer);
     client.end(true);
+    connected = false;
+
+    if (uploadInFlight) {
+      await uploadInFlight;
+    }
+
+    await uploadStatus();
   });
 
   client.on("reconnect", () => {

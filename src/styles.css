@@ -894,3 +894,46 @@ footer {
   flex-wrap: wrap;
   gap: 8px 16px;
 }
+
+.account-settings {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-width: 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.account-settings h3 {
+  margin: 0 0 12px;
+}
+
+.account-settings form {
+  display: grid;
+  gap: 12px;
+  max-width: 400px;
+}
+
+.account-settings label {
+  display: grid;
+  gap: 6px;
+}
+
+.account-settings input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+}
+
+.account-settings p {
+  overflow-wrap: anywhere;
+}
+
+.account-settings button {
+  justify-self: start;
+}
