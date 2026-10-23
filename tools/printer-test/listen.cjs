@@ -1,6 +1,5 @@
 const mqtt = require("mqtt");
-const readline = require("node:readline/promises");
-const { stdin, stdout } = require("node:process");
+
 
 function describeState(state) {
   const labels = {
@@ -18,20 +17,14 @@ function describeState(state) {
 }
 
 async function main() {
-  const questions = readline.createInterface({
-    input: stdin,
-    output: stdout,
-  });
+  const host = process.env.PRINTER_HOST?.trim();
+  const serial = process.env.PRINTER_SERIAL?.trim();
+  const password = process.env.PRINTER_ACCESS_CODE?.trim();
+  const uploadToken = process.env.PRINTER_UPLOAD_TOKEN?.trim();
 
-  const host = (await questions.question("Printer IP address: ")).trim();
-  const serial = (await questions.question("Printer serial number: ")).trim();
-  const password = (await questions.question("LAN access code: ")).trim();
-
-  const uploadToken = (
-    await questions.question("Dashboard printer upload token: ")
-  ).trim();
-
-  questions.close();
+  if (!host || !serial || !password || !uploadToken) {
+    throw new Error("Missing printer configuration.");
+  }
 
   console.log("Connecting to the printer…");
 
@@ -181,19 +174,27 @@ async function main() {
     });
   });
 
-  process.once("SIGINT", async () => {
-    console.log("Stopping and reporting disconnected…");
+  let stopping = false;
 
-    clearInterval(uploadTimer);
-    client.end(true);
-    connected = false;
+async function shutdown() {
+  if (stopping) return;
+  stopping = true;
 
-    if (uploadInFlight) {
-      await uploadInFlight;
-    }
+  console.log("Stopping and reporting disconnected…");
 
-    await uploadStatus();
-  });
+  clearInterval(uploadTimer);
+  client.end(true);
+  connected = false;
+
+  if (uploadInFlight) {
+    await uploadInFlight;
+  }
+
+  await uploadStatus();
+}
+
+process.once("SIGINT", shutdown);
+process.once("SIGTERM", shutdown);
 
   client.on("reconnect", () => {
     console.log("Trying to reconnect…");
