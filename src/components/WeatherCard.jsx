@@ -1,5 +1,6 @@
 import React from "react";
 import WeatherIcon from "./WeatherIcon";
+import useIndoorTemperature from "../hooks/useIndoorTemperature";
 
 
 export default function WeatherCard({ 
@@ -9,6 +10,8 @@ export default function WeatherCard({
     error,
     isLive, 
   }) {
+
+    const indoor = useIndoorTemperature();
 
   const degrees = (c) => Math.round(unit === "F" ? (c * 9) / 5 + 32 : c);
 
@@ -29,6 +32,20 @@ export default function WeatherCard({
         </span>
       </div>
       <p className="muted">{weather.location}</p>
+      <p className="muted">
+        Inside ·{" "}
+        {!indoor.configured
+          ? "Account connection not configured"
+          : indoor.loading
+            ? "Loading…"
+            : !indoor.signedIn
+              ? "Sign in through Settings to view"
+              : indoor.error
+                ? "Temperature unavailable"
+                : indoor.reading
+                  ? `${degrees(indoor.reading.temperatureC)}°${unit}`
+                  : "Waiting for temperature"}
+      </p>
       {error && (
         <p className="muted" role="status">
           {isLive
