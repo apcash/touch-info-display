@@ -102,7 +102,7 @@ export default function PrinterCard() {
         {printer?.printer_name ?? "Bambu A1"}
       </p>
 
-      <div className="printer-body">
+      <div className={showReadings ? "printer-body has-readings" : "printer-body"}>
         <div className="print-illustration" aria-hidden="true">
           <div className="printer-frame">
             <div className="print-head" />
@@ -137,14 +137,6 @@ export default function PrinterCard() {
 
           {showReadings && (
             <>
-              <div className="card-footer">
-                <span>
-                  Nozzle: {temperature(printer.nozzle_temperature_c)}
-                </span>
-                <span>
-                  Bed: {temperature(printer.bed_temperature_c)}
-                </span>
-              </div>
 
               <p className="muted">
                 Time remaining: {remainingTime(printer.remaining_minutes)}
@@ -161,7 +153,20 @@ export default function PrinterCard() {
             </p>
           )}
         </div>
+        {showReadings && (
+          <dl className="printer-temperatures">
+            <div>
+              <dt>Nozzle</dt>
+              <dd>{temperature(printer.nozzle_temperature_c)}</dd>
+            </div>
+            <div>
+              <dt>Bed</dt>
+              <dd>{temperature(printer.bed_temperature_c)}</dd>
+            </div>
+          </dl>
+        )}
       </div>
     </section>
   );
 }
+

@@ -32,20 +32,6 @@ export default function WeatherCard({
         </span>
       </div>
       <p className="muted">{weather.location}</p>
-      <p className="muted">
-        Inside ·{" "}
-        {!indoor.configured
-          ? "Account connection not configured"
-          : indoor.loading
-            ? "Loading…"
-            : !indoor.signedIn
-              ? "Sign in through Settings to view"
-              : indoor.error
-                ? "Temperature unavailable"
-                : indoor.reading
-                  ? `${degrees(indoor.reading.temperatureC)}°${unit}`
-                  : "Waiting for temperature"}
-      </p>
       {error && (
         <p className="muted" role="status">
           {isLive
@@ -58,6 +44,20 @@ export default function WeatherCard({
           {degrees(weather.temperatureC)}
           <small>°{unit}</small>
         </span>
+        <div className="indoor-reading">
+          <span className="indoor-label">Inside</span>
+          {indoor.configured && indoor.signedIn && !indoor.loading &&
+           !indoor.error && indoor.reading ? (
+            <span className="indoor-temperature">
+              {degrees(indoor.reading.temperatureC)}<small>°{unit}</small>
+            </span>
+          ) : (
+            <span className="indoor-status">
+              {!indoor.configured ? "Not configured" : indoor.loading ? "Loading…" :
+                !indoor.signedIn ? "Sign in through Settings" : "Unavailable"}
+            </span>
+          )}
+        </div>
         <span className="sun" aria-hidden="true">
           <WeatherIcon condition={weather.condition} size={64} />
         </span>
@@ -114,3 +114,4 @@ export default function WeatherCard({
     </section>
   );
 }
+

@@ -939,3 +939,77 @@ footer {
 .account-settings button {
   justify-self: start;
 }
+/* Keep both household temperatures readable at a glance. */
+.weather-main {
+  gap: 18px;
+}
+.indoor-reading {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border-left: 1px solid var(--line);
+  padding-left: 20px;
+  margin-left: auto;
+}
+.indoor-label {
+  font-size: 16px;
+  font-weight: 600;
+}
+.indoor-temperature {
+  font-family: Manrope, sans-serif;
+  font-size: 38px;
+  line-height: 1.2;
+  letter-spacing: -1px;
+  white-space: nowrap;
+}
+.indoor-temperature small {
+  font-size: 20px;
+  vertical-align: top;
+  display: inline-block;
+  margin-top: 4px;
+}
+.indoor-status {
+  max-width: 130px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.weather-main > .sun {
+  flex-shrink: 0;
+}
+.printer-body.has-readings {
+  grid-template-columns: 110px minmax(0, 1fr) minmax(180px, 0.55fr);
+}
+.printer-temperatures {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin: 0;
+  padding-left: 24px;
+  border-left: 1px solid var(--line);
+}
+.printer-temperatures dt {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.printer-temperatures dd {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 760px) {
+  .printer-body.has-readings {
+    grid-template-columns: 90px minmax(0, 1fr);
+  }
+  .printer-temperatures {
+    grid-column: 2;
+    padding: 0;
+    border: 0;
+  }
+}
+@media (max-width: 400px) {
+  .weather-main { gap: 12px; flex-wrap: wrap; }
+  .indoor-reading { padding-left: 12px; }
+  .weather-main > .sun svg { width: 40px; height: 40px; }
+}
