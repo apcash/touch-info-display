@@ -1208,3 +1208,27 @@ footer {
   max-width: none;
   margin-left: -24px;
 }
+
+.theme-travel .shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.theme-travel .shell > div:not([hidden]),
+.theme-travel .travel-page,
+.theme-travel .travel-page > section,
+.theme-travel .travel-content,
+.theme-travel .travel-maps {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.theme-travel .travel-map-stack {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

@@ -191,14 +191,16 @@ export default function TravelMaps({ ownerId, person, onEditingChange }) {
         </div>
       )}
       <p className="travel-save-status" role="status">{saving ? "Saving visit…" : notice}</p>
-      <section className="travel-map-panel" aria-labelledby="world-map-heading">
-        <h3 id="world-map-heading">Around the world</h3>
-        {renderMap(maps.countries, "0 0 1000 500", "World travel map")}
-      </section>
-      <section className="travel-map-panel" aria-labelledby="us-map-heading">
-        <h3 id="us-map-heading">Across the United States</h3>
-        {renderMap(maps.states, "0 0 975 610", "United States travel map")}
-      </section>
+      <div className="travel-map-stack">
+        <section className="travel-map-panel" aria-labelledby="world-map-heading">
+          <h3 id="world-map-heading">Around the world</h3>
+          {renderMap(maps.countries, "0 0 1000 500", "World travel map")}
+        </section>
+        <section className="travel-map-panel" aria-labelledby="us-map-heading">
+          <h3 id="us-map-heading">Across the United States</h3>
+          {renderMap(maps.states, "0 0 975 610", "United States travel map")}
+        </section>
+      </div>
       {visitedPlaces.length > 0 && <details className="travel-visited-list">
         <summary>Visited places ({totalPlaces})</summary>
         <div className="travel-place-tags">{visitedPlaces.map(place =>
