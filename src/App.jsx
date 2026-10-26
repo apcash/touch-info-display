@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { Suspense, lazy, useEffect, useState } from "react";
 import { readSaved, save } from "./storage";
 import DailySpacePage from "./pages/DailySpacePage";
 import HomePage from "./pages/HomePage";
 import DevotionalPage from "./pages/DevotionalPage";
+const TravelPage = lazy(() => import("./pages/TravelPage"));
 import CopyrightNotice from "./components/CopyrightNotice";
 import AccountSettings from "./components/AccountSettings";
 
@@ -220,8 +221,9 @@ export default function App() {
           <div hidden={currentPage !== "devotional"}>
             <DevotionalPage />
           </div>
+          {currentPage === "travel" && <Suspense fallback={<p role="status">Loading travel maps…</p>}><TravelPage /></Suspense>}
           {pages
-            .filter((page) => ["recipes", "travel"].includes(page.id))
+            .filter((page) => ["recipes"].includes(page.id))
             .map((page) => (
             <div key={page.id} hidden={currentPage !== page.id}>
               <main>
@@ -264,3 +266,5 @@ export default function App() {
     </div>
   );
 }
+
+
