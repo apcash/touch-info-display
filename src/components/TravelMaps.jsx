@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import maps from "../data/travelMaps.json";
-import { fetchVisits, setVisited } from "../travelApi";
+import { fetchVisits, saveVisits } from "../travelApi";
 
 const places = [...maps.countries, ...maps.states];
 const keyFor = (place) => place.type + ":" + place.code;
 const normalize = (text) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
-export default function TravelMaps({ ownerId, person }) {
+export default function TravelMaps({ ownerId, person, onEditingChange }) {
   const [visits, setVisits] = useState(new Set());
+  const [savedVisits, setSavedVisits] = useState(new Set());
   const [editing, setEditing] = useState(false);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -30,29 +31,56 @@ export default function TravelMaps({ ownerId, person }) {
     setError("");
     fetchVisits(ownerId, person.id, AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]))
       .then(rows => {
-        if (active) setVisits(new Set(rows.map(row => row.place_type + ":" + row.place_code)));
+        if (active) { const loaded = new Set(rows.map(row => row.place_type + ":" + row.place_code)); setVisits(loaded); setSavedVisits(loaded); setEditing(false); setNotice(""); onEditingChange(false); }
       })
       .catch(err => { if (active) setError(err.message); })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; controller.abort(); };
   }, [ownerId, person.id, reload]);
 
-  async function toggle(place) {
+
+  useEffect(() => {
+    if (!editing) return;
+    const warn = event => { event.preventDefault(); event.returnValue = ""; };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [editing]);
+
+  function startEditing() {
+    setVisits(new Set(savedVisits));
+    setEditing(true);
+    onEditingChange(true);
+    setNotice("Changes are a draft until you save.");
+  }
+  function cancelEditing() {
+    setVisits(new Set(savedVisits));
+    setEditing(false);
+    onEditingChange(false);
+    setQuery("");
+    setNotice("Edits canceled.");
+  }
+  function toggle(place) {
     if (!editing || loading || error || busy.current) return;
+    setVisits(previous => {
+      const updated = new Set(previous);
+      if (updated.has(keyFor(place))) updated.delete(keyFor(place));
+      else updated.add(keyFor(place));
+      return updated;
+    });
+    setNotice("Unsaved changes");
+  }
+  async function saveDraft() {
+    if (busy.current || loading || error) return;
     busy.current = true;
     setSaving(true);
-    setNotice("");
-    const next = !visits.has(keyFor(place));
     try {
-      await setVisited(ownerId, person.id, place, next, AbortSignal.timeout(15000));
+      await saveVisits(person.id, savedVisits, visits, AbortSignal.timeout(20000));
       if (!alive.current) return;
-      setVisits(previous => {
-        const updated = new Set(previous);
-        if (next) updated.add(keyFor(place));
-        else updated.delete(keyFor(place));
-        return updated;
-      });
-      setNotice(place.name + (next ? " added." : " removed."));
+      setSavedVisits(new Set(visits));
+      setEditing(false);
+      onEditingChange(false);
+      setQuery("");
+      setNotice("Visits saved.");
     } catch (err) {
       if (alive.current) setError(err.message);
     } finally {
@@ -60,11 +88,22 @@ export default function TravelMaps({ ownerId, person }) {
       if (alive.current) setSaving(false);
     }
   }
-
   const canEdit = editing && !loading && !saving && !error;
   const matches = query.trim() ? places.filter(place =>
     normalize(place.name + " " + place.code).includes(normalize(query.trim()))) : [];
   const visitedPlaces = places.filter(place => visits.has(keyFor(place)));
+  const hasVisitedState = visitedPlaces.some(
+    (place) => place.type === "state"
+  );
+
+  const totalPlaces = visitedPlaces.filter(
+    (place) =>
+      !(
+        hasVisitedState &&
+        place.type === "country" &&
+        place.code === "US"
+      )
+  ).length;
 
   function renderMap(items, viewBox, title) {
     return (
@@ -85,7 +124,7 @@ export default function TravelMaps({ ownerId, person }) {
               }
             },
             className: "travel-region" + (visited ? " is-visited" : ""),
-            style: visited ? {fill:person.color} : undefined,
+            style: visited ? {fill:"var(--travel-accent)"} : undefined,
           };
           return place.d && (
             <path key={place.code} d={place.d} {...interaction}>
@@ -95,7 +134,7 @@ export default function TravelMaps({ ownerId, person }) {
         })}
         {items.filter(place => place.marker && (editing || visits.has(keyFor(place)))).map(place => (
           <circle key={place.code} cx={place.marker[0]} cy={place.marker[1]} r="4.5"
-            className="travel-marker" style={visits.has(keyFor(place)) ? {fill:person.color} : undefined}
+            className="travel-marker" style={visits.has(keyFor(place)) ? {fill:"var(--travel-accent)"} : undefined}
             role={canEdit ? "button" : undefined} tabIndex={canEdit ? 0 : undefined}
             aria-label={place.name} aria-pressed={canEdit ? visits.has(keyFor(place)) : undefined}
             onClick={() => toggle(place)}
@@ -118,15 +157,17 @@ export default function TravelMaps({ ownerId, person }) {
           <h2>{person.name}’s travels</h2>
           <p className="muted">
             {loading ? "Loading visits…" : error ? "Visits need refreshing" :
-              visitedPlaces.filter(p => p.type === "country").length + " countries & territories · " +
+              totalPlaces + " places visited · " + visitedPlaces.filter(p => p.type === "country").length + " countries & territories · " +
               visitedPlaces.filter(p => p.type === "state" && p.code !== "US-DC").length + " / 50 states" +
               (visits.has("state:US-DC") ? " · Washington, DC" : "")}
           </p>
         </div>
-        <button type="button" disabled={loading || saving || Boolean(error)}
-          aria-pressed={editing} onClick={() => setEditing(value => !value)}>
-          {editing ? "Done editing" : "Edit visits"}
-        </button>
+        <div className="travel-edit-actions">
+          {editing ? <>
+            <button type="button" disabled={saving || loading || Boolean(error)} onClick={saveDraft}>Save changes</button>
+            <button type="button" disabled={saving || Boolean(error)} onClick={cancelEditing}>Cancel</button>
+          </> : <button type="button" disabled={loading || Boolean(error)} onClick={startEditing}>Edit visits</button>}
+        </div>
       </div>
       {error && <div role="alert"><p>{error}</p>
         <button type="button" disabled={loading || saving}
@@ -159,7 +200,7 @@ export default function TravelMaps({ ownerId, person }) {
         {renderMap(maps.states, "0 0 975 610", "United States travel map")}
       </section>
       {visitedPlaces.length > 0 && <details className="travel-visited-list">
-        <summary>Visited places ({visitedPlaces.length})</summary>
+        <summary>Visited places ({totalPlaces})</summary>
         <div className="travel-place-tags">{visitedPlaces.map(place =>
           <span key={keyFor(place)}>{place.name}</span>)}</div>
       </details>}
@@ -172,4 +213,3 @@ export default function TravelMaps({ ownerId, person }) {
     </div>
   );
 }
-

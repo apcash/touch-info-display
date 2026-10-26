@@ -42,6 +42,7 @@ export default function App() {
   }));
 
 
+  const [travelEditing, setTravelEditing] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [storageOk, setStorageOk] = useState(true);
   const [currentPage, setCurrentPage] = useState("home");
@@ -98,13 +99,13 @@ export default function App() {
     <div className={`app ${effectiveTheme} theme-${currentPage}`}>
       <div className="shell">
         <header>
-          <a className="brand" href="#main">
+          {currentPage === "travel" ? <div className="travel-top-title"><h1>Places we’ve been</h1><span className="muted">5 of 5</span></div> : <a className="brand" href="#main">
             <span className="brand-mark" aria-hidden="true">
               ◈
             </span>{" "}
             at a glance<span className="brand-divider">/</span>
             <span className="brand-sub">{pages[currentIndex].label} · <span className="page-counter">{currentIndex + 1} of {pages.length}</span></span>
-          </a>
+          </a>}
           <button
             className="settings-button"
             aria-expanded={showSettings}
@@ -221,7 +222,7 @@ export default function App() {
           <div hidden={currentPage !== "devotional"}>
             <DevotionalPage />
           </div>
-          {currentPage === "travel" && <Suspense fallback={<p role="status">Loading travel maps…</p>}><TravelPage /></Suspense>}
+          {currentPage === "travel" && <Suspense fallback={<p role="status">Loading travel maps…</p>}><TravelPage onEditingChange={setTravelEditing} /></Suspense>}
           {pages
             .filter((page) => ["recipes"].includes(page.id))
             .map((page) => (
@@ -238,6 +239,7 @@ export default function App() {
             {previousPage && (
               <button
                 className="page-arrow page-arrow-left"
+                disabled={currentPage === "travel" && travelEditing}
                 onClick={() => setCurrentPage(previousPage.id)}
                 aria-label={`Go to ${previousPage.label}`}
               >

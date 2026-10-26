@@ -3,12 +3,14 @@ import TravelMaps from "../components/TravelMaps";
 import { supabase } from "../supabaseClient";
 import { createTraveler, fetchTravelers } from "../travelApi";
 import TravelerEditor from "../components/TravelerEditor";
+import TravelerColorPicker from "../components/TravelerColorPicker";
 
-function TravelerProfiles({ ownerId }) {
+function TravelerProfiles({ ownerId, onEditingChange }) {
+  const [mapEditing, setMapEditing] = useState(false);
   const [people, setPeople] = useState([]);
   const [selectedId, setSelectedId] = useState("");
   const [name, setName] = useState("");
-  const [color, setColor] = useState("#B58B50");
+  const [color, setColor] = useState("#91A58B");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -96,10 +98,14 @@ function TravelerProfiles({ ownerId }) {
     setNotice("Traveler and their saved visits removed.");
   }
 
+  function changeEditing(value) {
+    setMapEditing(value);
+    onEditingChange(value);
+  }
   const selected = people.find((person) => person.id === selectedId);
 
   return (
-    <>
+    <div className="travel-content" style={{"--traveler-color": selected?.color ?? "#829DB5"}}>
       {loading && <p role="status">Loading travelers…</p>}
       {error && (
         <div role="alert">
@@ -111,9 +117,9 @@ function TravelerProfiles({ ownerId }) {
         </div>
       )}
       {!loading && (
-        <div className="travel-profile-layout">
+        <fieldset className="travel-profile-layout" disabled={mapEditing}>
           <div>
-            <h2>Who’s exploring?</h2>
+            <span className="sr-only">Choose a traveler</span>
             {people.length ? (
               <div className="traveler-picker" role="group" aria-label="Choose traveler">
                 {people.map((person) => (
@@ -129,7 +135,7 @@ function TravelerProfiles({ ownerId }) {
             ) : (
               <p>Add your first traveler to get started.</p>
             )}
-            {selected && <p className="muted">Selected traveler: {selected.name}</p>}
+
             {selected && (
               <TravelerEditor
                 key={`${selected.id}:${selected.name}:${selected.color}`}
@@ -148,23 +154,26 @@ function TravelerProfiles({ ownerId }) {
             <input id="traveler-name" value={name} maxLength={40} required
               disabled={saving} autoComplete="off"
               onChange={(event) => setName(event.target.value)} />
-            <label htmlFor="traveler-color">Map color</label>
-            <input id="traveler-color" type="color" value={color} disabled={saving}
-              onChange={(event) => setColor(event.target.value)} />
+
+            <TravelerColorPicker
+              value={color}
+              onChange={setColor}
+              disabled={saving}
+            />
             <button type="submit"
               disabled={saving || !name.trim() || saveUncertain || Boolean(error)}>
               {saving ? "Saving…" : "Add traveler"}
             </button>
           </form></details>
-        </div>
+        </fieldset>
       )}
       <p className="muted" role="status">{notice}</p>
-      {!loading && selected && <TravelMaps key={selected.id} ownerId={ownerId} person={selected} />}
-    </>
+      {!loading && selected && <TravelMaps key={selected.id} ownerId={ownerId} person={selected} onEditingChange={changeEditing} />}
+    </div>
   );
 }
 
-export default function TravelPage() {
+export default function TravelPage({ onEditingChange }) {
   const [account, setAccount] = useState({ checking: true, userId: null });
 
   useEffect(() => {
@@ -173,25 +182,22 @@ export default function TravelPage() {
       return;
     }
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => setAccount({
-        checking: false, userId: session?.user.id ?? null,
-      }),
+      (_event, session) => {
+        setAccount({checking: false, userId: session?.user.id ?? null});
+        if (!session) onEditingChange(false);
+      },
     );
     return () => subscription.unsubscribe();
   }, []);
 
   return (
     <main className="travel-page">
-      <section className="card" aria-labelledby="travel-title">
-        <h1 id="travel-title">Places we’ve been</h1>
-        <p className="muted">Every journey adds a little color.</p>
+      <section aria-label="Travel tracker">
         {!supabase ? <p>Account connection is not configured.</p>
           : account.checking ? <p role="status">Checking sign-in…</p>
           : !account.userId ? <p>Sign in through Display settings to view your travelers.</p>
-          : <TravelerProfiles key={account.userId} ownerId={account.userId} />}
+          : <TravelerProfiles key={account.userId} ownerId={account.userId} onEditingChange={onEditingChange} />}
       </section>
     </main>
   );
 }
-
-

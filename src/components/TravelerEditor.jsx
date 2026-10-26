@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { updateTraveler, deleteTraveler } from "../travelApi";
+import TravelerColorPicker from "./TravelerColorPicker";
 
 export default function TravelerEditor({
   ownerId,
@@ -87,12 +88,10 @@ export default function TravelerEditor({
         />
 
         <label htmlFor="edit-traveler-color">Map color</label>
-        <input
-          id="edit-traveler-color"
-          type="color"
-          value={color}
-          disabled={busy || Boolean(error)}
-          onChange={(event) => setColor(event.target.value)}
+        <TravelerColorPicker
+            value={color}
+            onChange={setColor}
+            disabled={busy || Boolean(error)}
         />
 
         <button

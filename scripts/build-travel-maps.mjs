@@ -8,9 +8,23 @@ iso.registerLocale(require("i18n-iso-countries/langs/en.json"));
 const read = (name) => JSON.parse(fs.readFileSync(require.resolve(name), "utf8"));
 const world = feature(read("world-atlas/countries-110m.json"), read("world-atlas/countries-110m.json").objects.countries);
 world.features = world.features.filter(f => f.id !== "010");
+
+function separateFrenchGuiana(collection) {
+  const france = collection.features.find(f => f.id === "250");
+  if (!france || france.geometry.type !== "MultiPolygon") throw new Error("France geometry missing");
+  const inGuiana = polygon => polygon[0].every(([lon,lat]) => lon > -55 && lon < -50 && lat > 1 && lat < 7);
+  const guiana = france.geometry.coordinates.filter(inGuiana);
+  if (!guiana.length) throw new Error("French Guiana geometry missing");
+  france.geometry.coordinates = france.geometry.coordinates.filter(p => !inGuiana(p));
+  collection.features = collection.features.filter(f => f.id !== "254");
+  collection.features.push({type:"Feature",id:"254",properties:{name:"French Guiana"},geometry:{type:"MultiPolygon",coordinates:guiana}});
+}
+separateFrenchGuiana(world);
+
 const projection = geoNaturalEarth1().fitExtent([[10,10],[990,490]], world);
 const path = geoPath(projection).digits(2);
 const details = feature(read("world-atlas/countries-10m.json"), read("world-atlas/countries-10m.json").objects.countries);
+separateFrenchGuiana(details);
 const countries = Object.entries(iso.getNames("en", {select:"official"})).filter(([code]) => code !== "AQ").map(([code,name]) => {
   const id = iso.alpha2ToNumeric(code);
   const shape = world.features.find(f => f.id === id);

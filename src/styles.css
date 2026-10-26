@@ -1080,3 +1080,125 @@ footer {
   .travel-map-toolbar { align-items: flex-start; }
   .travel-profile-layout { gap: 12px; }
 }
+
+.traveler-colors {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.traveler-colors legend {
+  margin-bottom: 10px;
+}
+
+.traveler-color-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.traveler-color-options button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 54px;
+  padding: 10px;
+  text-align: left;
+  font-size: 13px;
+}
+
+.traveler-color-options button[aria-pressed="true"] {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.traveler-color-swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.traveler-color-check {
+  margin-left: auto;
+}
+
+.traveler-custom-color {
+  margin-top: 14px;
+}
+
+.traveler-custom-color summary {
+  cursor: pointer;
+  min-height: 48px;
+  padding: 12px 0;
+}
+
+.traveler-custom-color label {
+  display: block;
+  margin-bottom: 8px;
+}
+/* Travel is a full-screen atlas with a dedicated midnight palette. */
+.app.theme-travel {
+  --bg: #0d1523;
+  --card: #142033;
+  --ink: #dce3ec;
+  --muted: #9daabc;
+  --line: #2b394d;
+  background: var(--bg);
+  color: var(--ink);
+}
+.theme-travel .shell {
+  max-width: none;
+  padding: 20px clamp(24px, 4vw, 60px) 16px;
+}
+.theme-travel header { padding-bottom: 12px; }
+.travel-top-title { display:flex; align-items:baseline; gap:20px; }
+.travel-top-title h1 { font-family:Manrope,sans-serif; font-size:clamp(24px,3vw,36px); margin:0; letter-spacing:-1px; }
+.theme-travel footer { display:none; }
+.theme-travel .travel-page { margin-top: 12px; }
+.travel-content {
+  --travel-accent: color-mix(in srgb, var(--traveler-color) 72%, #9ca9ba);
+  --travel-land: color-mix(in srgb, var(--travel-accent) 22%, #172131);
+  --travel-text: color-mix(in srgb, var(--travel-accent) 30%, #e1e6ed);
+  color: var(--travel-text);
+}
+.theme-travel .travel-profile-layout {
+  display:flex; align-items:flex-start; justify-content:space-between;
+  gap:16px; border:0; padding:0; margin:0; min-width:0;
+}
+.theme-travel .travel-profile-layout > div { flex:1; min-width:0; }
+.theme-travel .traveler-picker { gap:10px; }
+.theme-travel .traveler-picker button { min-height:48px; padding:8px 14px; }
+.theme-travel .travel-add-person { min-width:160px; }
+.theme-travel .traveler-form { border:0; padding:12px 0; max-width:420px; }
+.theme-travel .travel-edit-person summary { min-height:40px; padding:10px 0; cursor:pointer; font-size:13px; color:var(--muted); }
+.theme-travel .travel-maps { margin-top:4px; padding-top:12px; }
+.theme-travel .travel-map-toolbar h2 { font-size:18px; }
+.theme-travel .travel-map-toolbar .muted { margin-bottom:0; }
+.travel-edit-actions { display:flex; gap:8px; flex-wrap:wrap; }
+.theme-travel .travel-save-status:empty { min-height:0; margin:0; }
+.theme-travel .travel-map-panel { margin-top:12px; }
+.theme-travel .travel-map-panel h3 { font-weight:500; font-size:15px; color:var(--muted); margin-bottom:0; }
+.theme-travel .travel-map {
+  max-height:none;
+  width:100%;
+}
+.theme-travel .travel-region { fill:var(--travel-land); stroke:var(--bg); stroke-width:.7; }
+.theme-travel .travel-marker { fill:var(--muted); stroke:var(--bg); }
+.theme-travel .is-editing .travel-region:hover,
+.theme-travel .is-editing .travel-region:focus,
+.theme-travel .is-editing .travel-marker:hover,
+.theme-travel .is-editing .travel-marker:focus { stroke:var(--travel-text); stroke-width:2; }
+.theme-travel .travel-search { max-width:720px; }
+.theme-travel .travel-search-results { max-height:180px; }
+.theme-travel .travel-map-panel + .travel-map-panel { border-top:1px solid var(--line); padding-top:12px; }
+@media (min-width: 1400px) {
+  .theme-travel .travel-content { max-width:1300px; margin-inline:auto; }
+}
+@media (max-width: 620px) {
+  .travel-top-title { gap:10px; }
+  .theme-travel .travel-profile-layout { flex-wrap:wrap; }
+  .theme-travel .shell { padding:16px 24px; }
+  .theme-travel .travel-top-title h1 { font-size:22px; }
+}

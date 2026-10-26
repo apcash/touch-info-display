@@ -4,12 +4,13 @@
 <body><main>
 <nav><a href="./about.html">About</a> · <a href="./privacy.html">Privacy</a> · <a href="./terms.html">Terms</a></nav>
 <h1>Privacy Policy</h1>
-<p>Last updated: October 23, 2026</p>
+<p>Last updated: October 26, 2026</p>
 <p>Home Touch Display, also called “at a glance,” is a personal household dashboard maintained by apcash. The optional Google Nest connection displays indoor temperature for the authorized household account.</p>
 <h2>Information and purpose</h2>
 <p>The app uses Supabase Authentication for dashboard account emails, identifiers, and sessions. It stores Wi-Fi details, checklist entries, display preferences, the private DAKboard URL, and a daily verse cache in the browser on the device where they are entered or fetched.</p>
 <p>The printer service sends connection status, activity, progress, remaining time, temperatures, and report timestamps to Supabase for display to the signed-in owner. Printer credentials and the upload token are stored in private local configuration on the service device.</p>
 <p>The Nest feature uses Google authorization tokens, a selected thermostat identifier, and measured indoor temperature to display an indoor reading. Google’s device response may also include thermostat metadata such as humidity, operating mode, and target temperatures. The feature reads temperature and does not change thermostat settings.</p>
+<p>The travel tracker stores traveler names, chosen map colors, and visited countries, territories, and US states in Supabase under the signed-in account. Draft map edits stay in memory until saved; Cancel discards them. Removing a traveler also removes their saved visits.</p>
 <h2>Access, sharing, and security</h2>
 <p>The app does not sell personal information, use Google user data for advertising, or use it to train generalized AI models. Data is used to provide requested features, maintain account access, and diagnose failures.</p>
 <p>The Nest implementation stores Google authorization credentials in Supabase server-side secrets, outside public source code and browser configuration. The server verifies the signed-in user and restricts thermostat readings to the configured owner account. Only the indoor temperature and retrieval timestamp are returned to the dashboard.</p>
@@ -25,4 +26,3 @@
 <h2>Contact and changes</h2>
 <p>Maintainer: apcash, owner of <a href="https://github.com/apcash/touch-info-display">touch-info-display</a>. Use the developer support email on the Google consent screen for private questions and deletion requests. This policy will be updated as data practices change.</p>
 </main></body></html>
-

@@ -87,3 +87,19 @@ export async function deleteTraveler(ownerId, personId, signal) {
     );
   }
 }
+export async function saveVisits(personId, expected, visits, signal) {
+  const { error } = await supabase.rpc("save_travel_visits", {
+    p_person_id: personId,
+    p_expected: [...expected].sort(),
+    p_visits: [...visits].sort(),
+  }).abortSignal(signal);
+  if (error) {
+    if (error.code === "40001") {
+      throw new Error("Visits changed on another display. Reload visits before editing again.");
+    }
+    if (error.code === "PGRST202") {
+      throw new Error("Visit saving needs the new Supabase setup query. Run save-travel-visits.sql, then reload visits.");
+    }
+    throw new Error("Could not confirm the save. Reload visits to check what was saved before editing again.");
+  }
+}
