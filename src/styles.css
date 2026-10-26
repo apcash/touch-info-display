@@ -1202,3 +1202,9 @@ footer {
   .theme-travel .shell { padding:16px 24px; }
   .theme-travel .travel-top-title h1 { font-size:22px; }
 }
+
+.theme-travel .travel-map-panel:first-of-type .travel-map {
+  width: calc(100% + 48px);
+  max-width: none;
+  margin-left: -24px;
+}
